@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/login', { email, password });      
+      const response = await axios.post('https://ludobackend-production.up.railway.app//login', { email, password });      
       setUser({email:response.data.data.email,highscore:response.data.data.highScore});
     } catch (error) {
       throw new Error(error.response ? error.response.data.message : 'Login failed');
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/create-user', { email, password })
+      const response = await axios.post('https://ludobackend-production.up.railway.app//create-user', { email, password })
     } catch (error) {      
       console.log(error);
       
