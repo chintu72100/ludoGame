@@ -1,61 +1,111 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext'; // Adjust path as needed
 
 const Login = () => {
-  const [isSignUp, setIsSignUP] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { login, signUp } = useAuth(); // Destructure authentication methods
+  const navigate = useNavigate();
   
-  console.log(isSignUp);
+
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      if (isSignUp) {
+        // Handle sign-up
+        await signUp(email, password);
+        navigate('/login')
+        setLoading(false)
+        alert("user created successfully! please login");
+        
+      } else {
+        // Handle login
+        await login(email, password);
+        navigate('/GameMenu');
+      }
+       // Navigate after successful authentication
+    } catch (error) {
+      setError(error.message || 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full h-screen flex justify-center items-center">
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
       {isSignUp ? (
-        <div className="card flex flex-col justify-center items-center gap-2 border-2  border-zinc-500">
-          <h1 className="text-[2rem]">Login</h1>
+        <div className="card flex flex-col justify-center items-center gap-2 border-2 border-zinc-500">
+          <h1 className="text-[2rem]">Sign Up</h1>
           <input
             className="py-3 px-2 rounded-md border-2 border-zinc-500"
-            type="text"
-            placeholder="email"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={handleEmailChange}
           />
           <input
             className="py-3 px-2 rounded-md border-2 border-zinc-500"
-            type="text"
-            placeholder="password"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
           />
-          <button className="bg-white font-semibold px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-white">
-            <Link to="/gameMenu">Login</Link>
+          <button
+            onClick={handleSubmit}
+            className="bg-white font-semibold px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-white"
+          >
+            Sign Up
           </button>
           <div className="flex flex-row gap-1">
-            <p className="opacity-80">New user ? </p>{" "}
+            <p className="opacity-80">Already a user?</p>
             <span
-              className="hover:scale-105"
-              onClick={() => setIsSignUP(!isSignUp)}
+              className="hover:scale-105 cursor-pointer"
+              onClick={() => setIsSignUp(!isSignUp)}
             >
-              Sign up now.
+              Login.
             </span>
           </div>
         </div>
       ) : (
-        <div className="card flex flex-col justify-center items-center gap-2 border-2  border-zinc-500">
-          <h1 className="text-[2rem]">Sign Up</h1>
+        <div className="card flex flex-col justify-center items-center gap-2 border-2 border-zinc-500">
+          <h1 className="text-[2rem]">Login</h1>
           <input
             className="py-3 px-2 rounded-md border-2 border-zinc-500"
-            type="text"
-            placeholder="enter your email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={handleEmailChange}
           />
           <input
             className="py-3 px-2 rounded-md border-2 border-zinc-500"
-            type="text"
-            placeholder="password"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
           />
-          <button className="bg-white font-semibold px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-white">
-            Sign Up
+          <button
+            onClick={handleSubmit}
+            className="bg-white font-semibold px-2 py-1 rounded-md hover:bg-zinc-800 hover:text-white"
+          >
+            Login
           </button>
           <div className="flex flex-row gap-1">
-            <p className="opacity-80">Already a user </p>{" "}
+            <p className="opacity-80">New user?</p>
             <span
-              className="hover:scale-105"
-              onClick={() => setIsSignUP(!isSignUp)}
+              className="hover:scale-105 cursor-pointer"
+              onClick={() => setIsSignUp(!isSignUp)}
             >
-              Login.
+              Sign up now.
             </span>
           </div>
         </div>
